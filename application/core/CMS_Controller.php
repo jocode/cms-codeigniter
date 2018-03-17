@@ -19,9 +19,10 @@ class CMS_Controller extends CI_Controller {
 
 	/**
 	* Determina si estamos trabando en el front o back
+	* Debe tener el operador identidad para que pueda funcionar
 	*/
 	public function admin_panel(){
-		return strtolower($this->uri->segment(1)) == $this->admin_panel;
+		return (strtolower($this->uri->segment(1)) === $this->admin_panel);
 	}
 
 	/**

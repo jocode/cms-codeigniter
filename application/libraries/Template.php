@@ -55,32 +55,38 @@ class Template {
 	*/
 	public function render($view = null){
 		$template = $this->_route();
-		$routes = array();
-		$this->_set_assets();
-
+		$routes = [];
+		
 		if ( ! empty($view) ){
-			if ( !is_array($view) ){
+			if ( ! is_array($view) ){
 				$view = [$view];
 			}
-		}
+			
 
-		foreach ($view as $file) {
-			$route = $this->panel == 'backend' ? 'admin' : '';
-			$route .= $this->name . '/html/' .str_replace('admin/', '', $file);
+			foreach ($view as $file) {
+				$route = ($this->panel == 'backend') ? 'admin/' : '';
+				$route .= $this->name . '/html/' .str_replace('admin/', '', $file);
 
-			if (file_exists(APPPATH . 'views/templates/'.$route.'.php')){
-				$routes[] = APPPATH . 'views/templates/'.$route.'.php';
-			} else if ( file_exists(APPPATH . 'views/'.$file.'.php') ){
-				$routes[] = APPPATH . 'views/'.$file.'.php';
-			} else {
-				show_error('Error View');
+				if (file_exists(APPPATH . 'views/templates/'.$route.'.php')){
+					$routes[] = APPPATH . 'views/templates/'.$route.'.php';
+				} else if ( file_exists(APPPATH . 'views/'.$file.'.php') ){
+					$routes[] = APPPATH . 'views/'.$file.'.php';
+				} else {
+					print_r($routes);
+					show_error('Error View');
+				}
 			}
-
-			$this->data['_admin_panel_uri'] = $this->CI->admin_panel_uri();
-			$this->data['_content'] = $routes;
-
-			$this->CI->load->view($template, $this->data);
 		}
+
+		#  Establecemos los archivos y mensajes que usará la vista
+		$this->_set_assets();
+		$this->_set_messages();
+			# Variable de la ruta de la administración para mostrarla en la vista
+		$this->data['_admin_panel_uri'] = $this->CI->admin_panel_uri();
+			# Todas las vistas las enviamos en la variable _content para cargarlas en template.php
+		$this->data['_content'] = $routes;
+
+		$this->CI->load->view($template, $this->data);
 	}
 
 	public function add_js($type, $value, $charset = null, $deffer = null, $async = null){
@@ -89,6 +95,18 @@ class Template {
 
 	public function add_css($type, $value, $media = null){
 		$this->_add_asset($type, $value, ['media' => $media], 'style');
+	}
+
+	/**
+	* Agrega los mensajes desde el controlador
+	*/
+	public function add_message($message, $type = null){
+		$this->_add_message($message, $type);
+	}
+
+	public function set_flash_message($message){
+		if (sizeof($message > 0))
+			$this->CI->session->set_flashdata('_message_', $message);
 	}
 
 	/**
@@ -197,20 +215,20 @@ class Template {
 				# Determina donde ir a buscar el script
 				switch ($js['type']) {
 					case 'base':
-						$src = $js['value'] . '.js' ;
-						break;
+					$src .= $js['value'] . '.js' ;
+					break;
 					case 'template':
-						$src.='templates/'.$panel . $this->name .'/' . $js['value'] . '.js' ;
-						break;
+					$src.= 'templates/'.$panel . $this->name .'/' . $js['value'] . '.js' ;
+					break;
 					case 'view':
-						$src.='views/'. $js['value'] . '.js' ;
-						break;
+					$src.= 'views/'. $js['value'] . '.js' ;
+					break;
 					case 'url':
-						$src = $js['value'] . '.js' ;
-						break;
+					$src = $js['value'];
+					break;
 					default:
-						$src = '';
-						break;
+					$src = '';
+					break;
 				}
 
 				$_js .= sprintf('<script type="text/javascript" src="%s" %s %s %s></script>', $src, $charset, $defer, $async);
@@ -232,21 +250,21 @@ class Template {
 				# Determina donde ir a buscar el script
 				switch ($css['type']) {
 					case 'base':
-							$href.= $css['value'] . '.css';
-						break;
+					$href.= $css['value'] . '.css';
+					break;
 
 					case 'template':
-						$href.='templates/'.$panel . $this->name .'/' . $css['value'] . '.css' ;
-						break;
+					$href.= 'templates/'.$panel . $this->name .'/' . $css['value'] . '.css' ;
+					break;
 					case 'view':
-						$href.='views/'. $css['value'] . '.css' ;
-						break;
+					$href.= 'views/'. $css['value'] . '.css' ;
+					break;
 					case 'url':
-						$href = $js['value'] . '.css' ;
-						break;
+					$href = $css['value'] ;
+					break;
 					default:
-						$href = '';
-						break;
+					$href = '';
+					break;
 				}
 
 				$_css .= sprintf('<link type="text/css" rel="stylesheet" href="%s" %s />', $href, $media);
@@ -256,7 +274,52 @@ class Template {
 
 		$this->data['_js'] = $_js;
 		$this->data['_css'] = $_css;
+	}
 
+	/**
+	* Agregamos el mensaje al atributo mensaje de la clase
+	*/
+	private function _add_message($message, $type = null){
+		if (! empty($message)){
+			$types = ['warning', 'success', 'error', 'info'];
+			
+			$check_type = function($_type) use ($types) {
+				return (empty($_type) || !in_array($_type, $types) ) ? 'warning' : $_type;
+			};
+
+			if (is_array($message)){
+
+				# Arreglo clave valor ['error' => 'Valor']
+				foreach ($message as $type => $msg) {
+					if (!empty($msg)){
+						$type = $check_type($type);
+
+						if (is_array($msg)){
+							foreach ($msg as $_msg) {
+								if (!empty($_msg))
+									$this->message[$type][] = (string) $_msg;
+							}
+						} else {
+							$this->message[$type][] = (string) $msg;
+						}
+					}
+				}
+			} else {
+				$type = $check_type($type);
+				$this->message[$type][] = (string) $message;
+			}
+		}
+	}
+
+	/**
+	* Este método define las variables de los mensajes que se van a enviar en la vista
+	*/
+	private function _set_messages(){
+		$this->_add_message($this->CI->session->flashdata('_message_'));
+		$this->data['_warning'] = isset($this->message['warning']) ? $this->message['warning'] : [];
+		$this->data['_success'] = isset($this->message['success']) ? $this->message['success'] : [];
+		$this->data['_error'] = isset($this->message['error']) ? $this->message['error'] : [];
+		$this->data['_info'] = isset($this->message['info']) ? $this->message['info'] : [];
 	}
 
 }

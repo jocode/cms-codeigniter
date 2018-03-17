@@ -1,2 +1,1 @@
-<h2>Vista test desde la plantilla</h2>
-<?php echo $titulo; ?>
+<h1>Hola soy la vista de Test</h1>

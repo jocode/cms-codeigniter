@@ -81,9 +81,7 @@ class Template {
 		#  Establecemos los archivos y mensajes que usará la vista
 		$this->_set_assets();
 		$this->_set_messages();
-			# Variable de la ruta de la administración para mostrarla en la vista
-		$this->data['_admin_panel_uri'] = $this->CI->admin_panel_uri();
-			# Todas las vistas las enviamos en la variable _content para cargarlas en template.php
+		# Todas las vistas las enviamos en la variable _content para cargarlas en template.php
 		$this->data['_content'] = $routes;
 
 		$this->CI->load->view($template, $this->data);

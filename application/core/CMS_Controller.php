@@ -32,7 +32,7 @@ class CMS_Controller extends CI_Controller {
 
 	private function _set_language(){
 		$lang = $this->session->userdata('global_lang');
-		if ($lang && in_array($lang, $this->config->item('cms_admin_languages'))){
+		if ($lang && in_array($lang, $this->config->item('cms_languages'))){
 			# Cambiamos un valor para la configuración del idioma
 			$this->config->set_item('language', $lang);
 		}

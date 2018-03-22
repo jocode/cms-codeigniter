@@ -25,9 +25,11 @@ CREATE TABLE `permissions` (
   `title` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
   `name` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 /*Data for the table `permissions` */
+
+insert  into `permissions`(`id`,`title`,`name`) values (1,'Público','public'),(2,'Registrado','registered');
 
 /*Table structure for table `role_permissions` */
 
@@ -42,6 +44,8 @@ CREATE TABLE `role_permissions` (
 
 /*Data for the table `role_permissions` */
 
+insert  into `role_permissions`(`role`,`permission`,`value`) values (1,1,1),(1,2,0);
+
 /*Table structure for table `roles` */
 
 DROP TABLE IF EXISTS `roles`;
@@ -50,9 +54,11 @@ CREATE TABLE `roles` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `role` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 /*Data for the table `roles` */
+
+insert  into `roles`(`id`,`role`) values (1,'Prueba');
 
 /*Table structure for table `template` */
 
@@ -106,9 +112,11 @@ CREATE TABLE `user` (
   `modified` int(10) unsigned DEFAULT '0',
   `modified_at` datetime DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 /*Data for the table `user` */
+
+insert  into `user`(`id`,`name`,`email`,`user`,`password`,`role`,`status`,`active`,`last_login`,`created`,`create_at`,`modified`,`modified_at`) values (1,'Prueba','prueba@prueba.com','prueba','prueba',1,1,1,'0000-00-00 00:00:00',0,'0000-00-00 00:00:00',0,'0000-00-00 00:00:00');
 
 /*Table structure for table `user_permissions` */
 
@@ -122,6 +130,8 @@ CREATE TABLE `user_permissions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 /*Data for the table `user_permissions` */
+
+insert  into `user_permissions`(`user`,`permission`,`value`) values (1,2,1);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

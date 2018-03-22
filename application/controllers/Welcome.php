@@ -6,10 +6,7 @@ class Welcome extends CMS_Controller {
 
 	public function index()
 	{
-		$this->load->library('acl', ['id'=>1]);
-		echo '<pre>';
-		print_r($this->acl->permissions); exit;
-
+		$this->load->library('user', ['id'=>1]);
 		$this->template->set('title', 'Welcome');
 		$this->template->render('welcome/index');
 	}

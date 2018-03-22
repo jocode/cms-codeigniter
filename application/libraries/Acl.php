@@ -141,6 +141,7 @@ class Acl {
 				->select(['u.permission', 'u.value', 'p.name', 'p.title'])
 				->join($this->tables['perms'] . ' p', 'u.permission=p.id')
 				->where(['u.user' => $this->user_id])
+				->where_in('u.permission', $ids)
 				->get()->result();
 
 
@@ -250,6 +251,7 @@ class Acl {
 			}
 		}
 
+		# Carga el archivo acl_lang, para el idioma
 		$this->CI->load->language('acl', $lang);
 	}
 

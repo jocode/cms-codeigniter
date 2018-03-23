@@ -116,7 +116,7 @@ CREATE TABLE `user` (
 
 /*Data for the table `user` */
 
-insert  into `user`(`id`,`name`,`email`,`user`,`password`,`role`,`status`,`active`,`last_login`,`created`,`create_at`,`modified`,`modified_at`) values (1,'Prueba','prueba@prueba.com','prueba','prueba',1,1,1,'0000-00-00 00:00:00',0,'0000-00-00 00:00:00',0,'0000-00-00 00:00:00');
+insert  into `user`(`id`,`name`,`email`,`user`,`password`,`role`,`status`,`active`,`last_login`,`created`,`create_at`,`modified`,`modified_at`) values (1,'Prueba','prueba@prueba.com','prueba','8cb2237d0679ca88db6464eac60da96345513964 ',1,1,1,'0000-00-00 00:00:00',0,'0000-00-00 00:00:00',0,'0000-00-00 00:00:00');
 
 /*Table structure for table `user_permissions` */
 

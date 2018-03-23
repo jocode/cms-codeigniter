@@ -12,13 +12,14 @@ class User {
 	private $table = 'user';
 	private $lang;
 	private $acl;
-	private $erros = [];
+	private $errors = [];
 	private $user_id;
 	private $user_user;
 	private $user_name;
 	private $user_email;
 	private $user_status;
 	private $user_active;
+	private $pattern = "/^([-a-z0-9_-1])+$/i";
 
 	public function __construct($options = array()){
 		$this->CI =& get_instance();
@@ -35,7 +36,7 @@ class User {
 		} else if ( (int) $this->CI->session->userdata('user_id') > 0){
 			$row = $this->_row(['id'=> $this->CI->session->userdata('user_id') ]);
 
-			if ( ! $row || $row->actite != 1 || $row->status != 1){
+			if ( ! $row || $row->active != 1 || $row->status != 1){
 				$this->CI->session->sess_destroy();
 				$this->_load(null);
 				return;
@@ -52,6 +53,9 @@ class User {
 		}
 	}
 
+	/**
+	* Devuelve los errores de la librería
+	*/
 	public function errors(){
 		return $this->errors;
 	}
@@ -71,8 +75,29 @@ class User {
 	/**
 	* Verifica si el usuario cumple con los requisitos para ingresar al sistema
 	*/
-	public function login($user, $password){
+	public function login($user, $password, $hash = 'sha256'){
 
+		if (empty($user)){
+			$this->errors[] = $this->CI->lang->line('user_error_username');
+		}
+
+		if (empty($password)){
+			$this->errors[] = $this->CI->lang->line('user_error_empty_password');
+		}
+
+		if (count($this->errors)){
+			return false;
+		}
+
+		# LLama un registro del usuario
+		$row = $this->_row(['user'=> $user, 'password'=> sha1($password)]);
+
+		if ( !isset($row) || $row->active != 1 || $row->status != 1){
+			$this->errors[] = $this->CI->lang->line('user_error_wrong_credentials');
+			return false;
+		}
+		$this->_load($row);
+		return true;
 	}
 
 	/**

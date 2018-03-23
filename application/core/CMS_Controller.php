@@ -12,6 +12,7 @@ class CMS_Controller extends CI_Controller {
 		}
 		$this->_set_language();
 		$this->lang->load('cms_general');
+		$this->load->library('user');
 
 	}
 
